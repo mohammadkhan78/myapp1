@@ -95,16 +95,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/tasks/:taskId/submit", async (req, res) => {
     try {
       const taskId = req.params.taskId;
-      const data = insertTaskSubmissionSchema.parse(req.body);
+      console.log('Task submission request:', { taskId, body: req.body });
+      
+      // Parse without taskId since it comes from URL params
+      const bodySchema = insertTaskSubmissionSchema.pick({ userId: true, screenshotUrl: true });
+      const data = bodySchema.parse(req.body);
       
       const submission = await storage.createTaskSubmission({
         ...data,
-        taskId
+        taskId,
+        status: 'pending'
       });
       
       res.json(submission);
     } catch (error) {
-      res.status(400).json({ message: "Failed to submit task" });
+      console.error('Task submission error:', error);
+      res.status(400).json({ message: "Failed to submit task", error: error.message });
     }
   });
 

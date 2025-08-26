@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Users, Target, CreditCard, Settings, Eye, Check, XIcon, Shield } from "lucide-react";
+import { X, Users, Target, CreditCard, Settings, Eye, Check, XIcon, Shield, Edit2, Trash2 } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ export default function AdminPage({ onClose }: AdminPageProps) {
   const [currentSection, setCurrentSection] = useState("users");
   const [showScreenshot, setShowScreenshot] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<TaskSubmission | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -160,6 +161,37 @@ export default function AdminPage({ onClose }: AdminPageProps) {
     },
   });
 
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({ id, taskData }: { id: string; taskData: any }) => {
+      const response = await fetch(`/api/admin/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData),
+      });
+      if (!response.ok) throw new Error('Failed to update task');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      toast({ title: "Task updated successfully" });
+      setEditingTask(null);
+    },
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete task');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      toast({ title: "Task deleted successfully" });
+    },
+  });
+
   const updateSettingMutation = useMutation({
     mutationFn: async (setting: { key: string; value: string }) => {
       const response = await fetch('/api/admin/settings', {
@@ -210,6 +242,25 @@ export default function AdminPage({ onClose }: AdminPageProps) {
   const viewScreenshot = (submission: TaskSubmission) => {
     setSelectedSubmission(submission);
     setShowScreenshot(true);
+  };
+
+  const handleEditTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTask) return;
+    
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    
+    updateTaskMutation.mutate({
+      id: editingTask.id,
+      taskData: {
+        title: formData.get('title'),
+        description: formData.get('description'),
+        reward: parseInt(formData.get('reward') as string) * 100, // Convert to paisa
+        taskType: formData.get('taskType'),
+        isAdvanced: formData.get('taskLevel') === 'Premium Task',
+        isActive: true,
+      }
+    });
   };
 
   if (!isAuthenticated) {
@@ -479,6 +530,55 @@ export default function AdminPage({ onClose }: AdminPageProps) {
               </form>
             </GlassCard>
 
+            {/* Current Tasks */}
+            <GlassCard className="p-6 mb-6">
+              <h4 className="font-semibold mb-4 text-cyan-400">Current Tasks ({tasks.length})</h4>
+              <div className="space-y-4">
+                {tasks.map((task) => (
+                  <div key={task.id} className="p-4 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium" data-testid={`task-title-${task.id}`}>
+                        {task.title}
+                      </div>
+                      <div className="text-sm text-gold">₹{(task.reward / 100).toFixed(0)}</div>
+                    </div>
+                    <div className="text-sm text-gray-400 mb-2">{task.description}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className={`text-xs px-2 py-1 rounded ${task.isAdvanced ? 'bg-purple-500/20 text-purple-400' : 'bg-green-500/20 text-green-400'}`}>
+                          {task.isAdvanced ? 'Premium' : 'Regular'}
+                        </span>
+                        <span className="text-xs text-gray-500 capitalize">{task.taskType}</span>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          onClick={() => setEditingTask(task)}
+                          size="sm"
+                          variant="ghost"
+                          className="text-blue-400 hover:text-blue-300"
+                          data-testid={`button-edit-task-${task.id}`}
+                        >
+                          <Edit2 size={16} />
+                        </Button>
+                        <Button
+                          onClick={() => deleteTaskMutation.mutate(task.id)}
+                          disabled={deleteTaskMutation.isPending}
+                          size="sm"
+                          variant="destructive"
+                          data-testid={`button-delete-task-${task.id}`}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {tasks.length === 0 && (
+                  <div className="text-center py-4 text-gray-400">No tasks available</div>
+                )}
+              </div>
+            </GlassCard>
+
             {/* Task Submissions */}
             <GlassCard className="p-6">
               <h4 className="font-semibold mb-4 text-yellow-400">Task Submissions ({taskSubmissions.length})</h4>
@@ -672,6 +772,83 @@ export default function AdminPage({ onClose }: AdminPageProps) {
               <small>File: {selectedSubmission?.screenshotUrl}</small>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Task Modal */}
+      <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
+        <DialogContent className="glass-effect border border-gray-700">
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+          </DialogHeader>
+          {editingTask && (
+            <form onSubmit={handleEditTask} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Select name="taskLevel" defaultValue={editingTask.isAdvanced ? "Premium Task" : "Regular Task"} required>
+                  <SelectTrigger className="instagram-input">
+                    <SelectValue placeholder="Task Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Regular Task">Regular Task</SelectItem>
+                    <SelectItem value="Premium Task">Premium Task</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  name="title"
+                  defaultValue={editingTask.title}
+                  placeholder="Task Title"
+                  className="instagram-input"
+                  required
+                />
+              </div>
+              <Textarea
+                name="description"
+                defaultValue={editingTask.description}
+                placeholder="Task Description"
+                className="instagram-input h-20"
+                required
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  name="reward"
+                  type="number"
+                  defaultValue={editingTask.reward / 100} // Convert from paisa
+                  placeholder="Reward Amount (₹)"
+                  className="instagram-input"
+                  min="1"
+                  required
+                />
+                <Select name="taskType" defaultValue={editingTask.taskType} required>
+                  <SelectTrigger className="instagram-input">
+                    <SelectValue placeholder="Task Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="follow">Follow Account</SelectItem>
+                    <SelectItem value="like">Like Posts</SelectItem>
+                    <SelectItem value="share">Share Story</SelectItem>
+                    <SelectItem value="custom">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  type="submit"
+                  disabled={updateTaskMutation.isPending}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+                >
+                  {updateTaskMutation.isPending ? 'Saving...' : 'Save Changes'}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setEditingTask(null)}
+                  variant="ghost"
+                  className="flex-1 text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>
