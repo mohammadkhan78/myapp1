@@ -116,16 +116,16 @@ function AppContent() {
         </Button>
       )}
 
-      {/* Hidden Admin Access Button */}
+      {/* Admin Access Button */}
       <Button
         onClick={() => setShowAdmin(true)}
-        className="fixed top-4 right-4 opacity-20 hover:opacity-100 text-gold p-2 transition-opacity z-30"
-        variant="ghost"
+        className="fixed top-4 right-4 bg-gold/20 hover:bg-gold/30 text-gold border border-gold/30 p-3 transition-all z-30 glow-button"
+        variant="outline"
         size="sm"
-        title="Admin Access"
+        title="Admin Panel"
         data-testid="button-admin-access"
       >
-        <Shield size={16} />
+        <Shield size={20} />
       </Button>
 
       {/* Help Page Overlay */}
