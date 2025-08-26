@@ -1,4 +1,4 @@
-import { Vault } from "lucide-react";
+import { Shield, Banknote } from "lucide-react";
 import GlassCard from "./GlassCard";
 
 interface EarningsChartProps {
@@ -21,7 +21,7 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
   return (
     <GlassCard className="p-6 card-glow">
       <div className="flex items-center justify-center mb-6">
-        <Vault className="text-2xl text-gold mr-2" size={24} />
+        <Shield className="text-2xl text-gold mr-2" size={24} />
         <h2 className="text-xl font-bold gradient-text">Task Vault</h2>
       </div>
       
@@ -41,9 +41,9 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
         </div>
       </div>
 
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <div className="flex items-center justify-center mb-2">
-          <Vault className="text-gold mr-2" size={20} />
+          <Banknote className="text-gold mr-2" size={20} />
           <h3 className="text-lg font-semibold text-glow">Task Vault</h3>
         </div>
         <h4 className="font-semibold text-gray-200 mb-1">Earnings Growth</h4>
@@ -93,7 +93,7 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
       </div>
 
       {/* Days of the week with data */}
-      <div className="grid grid-cols-7 gap-2 mb-4">
+      <div className="grid grid-cols-7 gap-1 mb-4">
         {weekData.map((data, index) => (
           <div key={data.day} className="text-center">
             <div className="text-xs text-gray-400 mb-1">{data.day}</div>
