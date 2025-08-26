@@ -8,6 +8,16 @@ interface EarningsChartProps {
 }
 
 export default function EarningsChart({ activeUsers, totalPaid, isLoading }: EarningsChartProps) {
+  const weekData = [
+    { day: 'Mon', earning: 45, growth: '2.3%' },
+    { day: 'Tue', earning: 52, growth: null },
+    { day: 'Wed', earning: 38, growth: null },
+    { day: 'Thu', earning: 68, growth: '₹1,240' },
+    { day: 'Fri', earning: 72, growth: null },
+    { day: 'Sat', earning: 58, growth: null },
+    { day: 'Sun', earning: 85, growth: '₹177' }
+  ];
+
   return (
     <GlassCard className="p-6 card-glow">
       <div className="flex items-center justify-center mb-6">
@@ -31,20 +41,24 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold mb-2 text-glow text-center">Earnings Growth</h3>
-      <p className="text-gray-300 mb-4 text-sm text-center">Weekly Performance</p>
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center mb-2">
+          <Vault className="text-gold mr-2" size={20} />
+          <h3 className="text-lg font-semibold text-glow">Task Vault</h3>
+        </div>
+        <h4 className="font-semibold text-gray-200 mb-1">Earnings Growth</h4>
+        <p className="text-gray-400 text-sm">Weekly Performance</p>
+      </div>
       
       {/* Enhanced Chart */}
-      <div className="chart-container">
-        <svg className="absolute inset-4 w-full h-full" viewBox="0 0 300 120" preserveAspectRatio="none">
-          {/* Grid lines */}
+      <div className="chart-container mb-4">
+        <svg className="absolute inset-4 w-full h-full" viewBox="0 0 350 100" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFC107" stopOpacity="0.8"/>
-              <stop offset="50%" stopColor="#FFD54F" stopOpacity="0.9"/>
-              <stop offset="100%" stopColor="#FFEB3B" stopOpacity="0.8"/>
+            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FFC107" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="#FFC107" stopOpacity="0.1"/>
             </linearGradient>
-            <filter id="glow">
+            <filter id="chartGlow">
               <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
@@ -53,33 +67,63 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
             </filter>
           </defs>
           
-          {/* Grid */}
-          <line x1="0" y1="100" x2="300" y2="100" stroke="rgba(255,193,7,0.1)" strokeWidth="1"/>
-          <line x1="0" y1="75" x2="300" y2="75" stroke="rgba(255,193,7,0.1)" strokeWidth="1"/>
-          <line x1="0" y1="50" x2="300" y2="50" stroke="rgba(255,193,7,0.1)" strokeWidth="1"/>
-          <line x1="0" y1="25" x2="300" y2="25" stroke="rgba(255,193,7,0.1)" strokeWidth="1"/>
+          {/* Area under the curve */}
+          <path 
+            d="M50,80 Q90,70 120,65 T180,50 T220,45 T260,35 T300,25 L300,95 L50,95 Z" 
+            fill="url(#areaGradient)"
+          />
           
           {/* Chart line with glow */}
           <path 
-            d="M20,95 Q60,85 80,75 T120,65 T160,55 T200,45 T240,35 T280,25" 
-            stroke="url(#chartGradient)" 
+            d="M50,80 Q90,70 120,65 T180,50 T220,45 T260,35 T300,25" 
+            stroke="#FFC107" 
             strokeWidth="3" 
             fill="none" 
-            filter="url(#glow)"
+            filter="url(#chartGlow)"
           />
           
           {/* Data points */}
-          <circle cx="20" cy="95" r="3" fill="#FFC107" filter="url(#glow)"/>
-          <circle cx="80" cy="75" r="3" fill="#FFD54F" filter="url(#glow)"/>
-          <circle cx="120" cy="65" r="3" fill="#FFC107" filter="url(#glow)"/>
-          <circle cx="160" cy="55" r="3" fill="#FFD54F" filter="url(#glow)"/>
-          <circle cx="200" cy="45" r="3" fill="#FFC107" filter="url(#glow)"/>
-          <circle cx="240" cy="35" r="3" fill="#FFD54F" filter="url(#glow)"/>
-          <circle cx="280" cy="25" r="3" fill="#FFEB3B" filter="url(#glow)"/>
+          <circle cx="50" cy="80" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="120" cy="65" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="180" cy="50" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="220" cy="45" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="260" cy="35" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="300" cy="25" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
         </svg>
-        
-        <div className="absolute bottom-4 left-4 text-xs text-gray-300">This Week</div>
-        <div className="absolute top-4 right-4 text-xs text-green-400 font-bold text-glow">+24.5%</div>
+      </div>
+
+      {/* Days of the week with data */}
+      <div className="grid grid-cols-7 gap-2 mb-4">
+        {weekData.map((data, index) => (
+          <div key={data.day} className="text-center">
+            <div className="text-xs text-gray-400 mb-1">{data.day}</div>
+            {data.growth && (
+              <div className={`text-xs font-bold mb-1 ${
+                data.growth.includes('₹') 
+                  ? data.day === 'Thu' ? 'text-gold' : 'text-blue-400'
+                  : 'text-green-400'
+              }`}>
+                {data.growth}
+              </div>
+            )}
+            {data.growth && data.growth.includes('₹') && (
+              <div className="text-xs text-gray-500">
+                {data.day === 'Thu' ? 'This Week' : 'Daily Avg'}
+              </div>
+            )}
+            {data.growth && !data.growth.includes('₹') && !data.growth.includes('%') && (
+              <div className="text-xs text-gray-500">Growth</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div className="text-center">
+        <div className="text-xs text-gray-500 flex items-center justify-center">
+          <div className="w-2 h-2 bg-gold rounded-full mr-2"></div>
+          Real-time earning statistics updated every hour
+        </div>
       </div>
     </GlassCard>
   );
