@@ -33,17 +33,17 @@ export default function HomePage({ onNavigate }: HomePageProps) {
       {/* Statistics */}
       <div className="px-4 mb-8">
         <div className="grid grid-cols-2 gap-4">
-          <GlassCard className="p-6 text-center">
-            <div className="text-3xl font-bold text-gold mb-2" data-testid="active-users">
+          <GlassCard className="p-6 text-center card-glow premium-glow">
+            <div className="text-3xl font-bold text-gold text-glow mb-2" data-testid="active-users">
               {isLoading ? '...' : (stats?.activeUsers || 0).toLocaleString()}
             </div>
-            <div className="text-gray-400">Active Users</div>
+            <div className="text-gray-300">Active Users</div>
           </GlassCard>
-          <GlassCard className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-400 mb-2" data-testid="total-paid">
+          <GlassCard className="p-6 text-center card-glow">
+            <div className="text-3xl font-bold text-green-400 text-glow mb-2" data-testid="total-paid">
               {isLoading ? '...' : `₹${(stats?.totalPaid || 0).toLocaleString()}`}
             </div>
-            <div className="text-gray-400">Total Paid</div>
+            <div className="text-gray-300">Total Paid</div>
           </GlassCard>
         </div>
       </div>
@@ -55,35 +55,35 @@ export default function HomePage({ onNavigate }: HomePageProps) {
 
       {/* Eligibility Requirements */}
       <div className="px-4 mb-8">
-        <GlassCard className="p-6">
+        <GlassCard className="p-6 card-glow">
           <div className="flex items-center mb-6">
             <CheckCircle className="text-green-400 text-xl mr-3" size={24} />
-            <h3 className="text-xl font-semibold">Eligibility Requirements</h3>
+            <h3 className="text-xl font-semibold text-glow">Eligibility Requirements</h3>
           </div>
           
           <div className="space-y-4">
-            <div className="flex items-center p-4 bg-pink-500/10 rounded-xl border border-pink-500/20">
+            <div className="flex items-center p-4 bg-pink-500/20 rounded-xl border border-pink-500/30 card-glow">
               <Instagram className="text-pink-500 text-xl mr-4" size={24} />
               <div className="flex-1">
-                <div className="font-medium">Instagram account with 1000+ followers</div>
+                <div className="font-medium text-pink-300">Instagram account with 1000+ followers</div>
               </div>
-              <ArrowRight className="text-gray-400" size={20} />
+              <ArrowRight className="text-pink-400" size={20} />
             </div>
             
-            <div className="flex items-center p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+            <div className="flex items-center p-4 bg-blue-500/20 rounded-xl border border-blue-500/30 card-glow">
               <Calendar className="text-blue-500 text-xl mr-4" size={24} />
               <div className="flex-1">
-                <div className="font-medium">Must be over 18 years old</div>
+                <div className="font-medium text-blue-300">Must be over 18 years old</div>
               </div>
-              <ArrowRight className="text-gray-400" size={20} />
+              <ArrowRight className="text-blue-400" size={20} />
             </div>
             
-            <div className="flex items-center p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
-              <Coins className="text-yellow-500 text-xl mr-4" size={24} />
+            <div className="flex items-center p-4 bg-yellow-500/20 rounded-xl border border-yellow-500/30 premium-glow">
+              <Coins className="text-yellow-400 text-xl mr-4" size={24} />
               <div className="flex-1">
-                <div className="font-medium">Earn up to ₹200 daily & ₹6000 monthly</div>
+                <div className="font-medium text-gold text-glow">Earn up to ₹200 daily & ₹6000 monthly</div>
               </div>
-              <ArrowRight className="text-gray-400" size={20} />
+              <ArrowRight className="text-gold" size={20} />
             </div>
           </div>
         </GlassCard>
