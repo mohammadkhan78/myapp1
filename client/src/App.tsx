@@ -34,8 +34,14 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Set initial page based on user status
+  // Check for admin route and handle initial page
   useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/admin') {
+      setShowAdmin(true);
+      return;
+    }
+    
     if (!isLoading) {
       if (!user) {
         setCurrentPage('home');
@@ -116,17 +122,6 @@ function AppContent() {
         </Button>
       )}
 
-      {/* Admin Access Button */}
-      <Button
-        onClick={() => setShowAdmin(true)}
-        className="fixed top-4 right-4 bg-gold/20 hover:bg-gold/30 text-gold border border-gold/30 p-3 transition-all z-30 glow-button"
-        variant="outline"
-        size="sm"
-        title="Admin Panel"
-        data-testid="button-admin-access"
-      >
-        <Shield size={20} />
-      </Button>
 
       {/* Help Page Overlay */}
       {showHelp && (
