@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { Wallet, Instagram, Heart, Share, Unlock } from "lucide-react";
+import { Wallet, Instagram, Heart, Share, Unlock, Upload, X } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import GlowButton from "@/components/GlowButton";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +19,9 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
 
   const { data: tasks = [], isLoading } = useQuery<Task[]>({
     queryKey: ['/api/tasks'],
@@ -27,13 +33,13 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
   });
 
   const submitTaskMutation = useMutation({
-    mutationFn: async (taskId: string) => {
+    mutationFn: async ({ taskId, screenshotUrl }: { taskId: string; screenshotUrl: string }) => {
       const response = await fetch(`/api/tasks/${taskId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user?.id,
-          screenshotUrl: 'screenshot-placeholder.jpg', // In real app, handle file upload
+          screenshotUrl,
         }),
       });
       
@@ -47,6 +53,9 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
       });
       queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       refreshUser();
+      setShowUploadModal(false);
+      setSelectedTask(null);
+      setScreenshotFile(null);
     },
     onError: () => {
       toast({
@@ -68,6 +77,26 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
       default:
         return <Instagram className="text-pink-500" size={24} />;
     }
+  };
+
+  const handleStartTask = (task: Task) => {
+    setSelectedTask(task);
+    setShowUploadModal(true);
+  };
+
+  const handleSubmitTask = () => {
+    if (!selectedTask || !screenshotFile) {
+      toast({
+        title: "Screenshot Required",
+        description: "Please upload a screenshot to submit the task.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // For now, we'll use a placeholder filename since we're not implementing file upload
+    const screenshotUrl = `screenshot-${Date.now()}-${screenshotFile.name}`;
+    submitTaskMutation.mutate({ taskId: selectedTask.id, screenshotUrl });
   };
 
   const handleUnlockAdvanced = () => {
@@ -142,12 +171,11 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
                   </div>
                 </div>
                 <Button
-                  onClick={() => submitTaskMutation.mutate(task.id)}
-                  disabled={submitTaskMutation.isPending}
+                  onClick={() => handleStartTask(task)}
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
                   data-testid={`button-start-task-${task.id}`}
                 >
-                  {submitTaskMutation.isPending ? 'Submitting...' : 'Start Task'}
+                  Start Task
                 </Button>
               </GlassCard>
             ))
@@ -169,6 +197,65 @@ export default function OfferwallPage({ onNavigate }: OfferwallPageProps) {
           </div>
         </div>
       </Button>
+
+      {/* Screenshot Upload Modal */}
+      <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
+        <DialogContent className="glass-effect border border-gray-700 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="gradient-text flex items-center">
+              <Upload className="mr-2" size={24} />
+              Submit Task Screenshot
+            </DialogTitle>
+          </DialogHeader>
+          {selectedTask && (
+            <div className="space-y-6">
+              <div className="p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                <h4 className="font-semibold mb-2">{selectedTask.title}</h4>
+                <p className="text-sm text-gray-400 mb-3">{selectedTask.description}</p>
+                <div className="text-gold font-bold">Reward: ₹{(selectedTask.reward / 100).toFixed(0)}</div>
+              </div>
+              
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Upload Screenshot</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setScreenshotFile(e.target.files?.[0] || null)}
+                  className="instagram-input"
+                  required
+                />
+                {screenshotFile && (
+                  <div className="text-sm text-green-400">✓ {screenshotFile.name} selected</div>
+                )}
+                <div className="text-xs text-gray-500">
+                  Please upload a clear screenshot showing task completion
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <Button
+                  onClick={handleSubmitTask}
+                  disabled={!screenshotFile || submitTaskMutation.isPending}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
+                >
+                  {submitTaskMutation.isPending ? 'Submitting...' : 'Submit Task'}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowUploadModal(false);
+                    setSelectedTask(null);
+                    setScreenshotFile(null);
+                  }}
+                  variant="ghost"
+                  className="flex-1 text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
