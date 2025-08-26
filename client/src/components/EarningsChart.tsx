@@ -52,7 +52,7 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
       
       {/* Enhanced Chart */}
       <div className="chart-container mb-4">
-        <svg className="absolute inset-4 w-full h-full" viewBox="0 0 350 100" preserveAspectRatio="none">
+        <svg className="absolute inset-4 w-full h-full" viewBox="0 0 320 100" preserveAspectRatio="none">
           <defs>
             <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#FFC107" stopOpacity="0.6"/>
@@ -69,13 +69,13 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
           
           {/* Area under the curve */}
           <path 
-            d="M50,80 Q90,70 120,65 T180,50 T220,45 T260,35 T300,25 L300,95 L50,95 Z" 
+            d="M15,85 Q60,75 90,70 T150,55 T190,50 T230,40 T270,30 T305,20 L305,95 L15,95 Z" 
             fill="url(#areaGradient)"
           />
           
           {/* Chart line with glow */}
           <path 
-            d="M50,80 Q90,70 120,65 T180,50 T220,45 T260,35 T300,25" 
+            d="M15,85 Q60,75 90,70 T150,55 T190,50 T230,40 T270,30 T305,20" 
             stroke="#FFC107" 
             strokeWidth="3" 
             fill="none" 
@@ -83,12 +83,13 @@ export default function EarningsChart({ activeUsers, totalPaid, isLoading }: Ear
           />
           
           {/* Data points */}
-          <circle cx="50" cy="80" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
-          <circle cx="120" cy="65" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
-          <circle cx="180" cy="50" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
-          <circle cx="220" cy="45" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
-          <circle cx="260" cy="35" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
-          <circle cx="300" cy="25" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="15" cy="85" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="90" cy="70" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="150" cy="55" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="190" cy="50" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="230" cy="40" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="270" cy="30" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
+          <circle cx="305" cy="20" r="3" fill="#FFC107" filter="url(#chartGlow)"/>
         </svg>
       </div>
 
