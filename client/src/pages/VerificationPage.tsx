@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/lib/auth";
 
 interface VerificationPageProps {
   onNavigate: (page: string) => void;
@@ -15,6 +16,7 @@ interface VerificationPageProps {
 export default function VerificationPage({ onNavigate }: VerificationPageProps) {
   const [instagramHandle, setInstagramHandle] = useState("");
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const verifyMutation = useMutation({
     mutationFn: async (handle: string) => {
@@ -30,13 +32,23 @@ export default function VerificationPage({ onNavigate }: VerificationPageProps) 
       
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.status === 'already_verified') {
         toast({
           title: "Already Verified",
           description: "Your account is already verified!",
         });
-        onNavigate('offerwall');
+        // Log the user in automatically
+        try {
+          await login(data.user.instagramHandle);
+          onNavigate('offerwall');
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to log in. Please try again.",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Verification Submitted",
