@@ -1,0 +1,119 @@
+I want to build a website called Task Vault. The website offers users money to complete certain Instagram platform-related tasks (like "follow on XYZ account, receive this much money").
+👉 These tasks must be editable in the admin panel.
+
+🎨 Website Design Requirements:
+
+The website is mainly targeting mobile audience.
+
+Theme: money-themed background and fonts, premium + professional look.
+
+UI: iPhone-like glass touch design.
+
+Buttons (signup, login, verify, etc.): glowing / shining.
+
+🏠 Homepage (First Page when user opens site):
+
+At the top → Website Logo.
+
+Below Logo → Statistics like:
+
+"This much users"
+
+"This much paid"
+
+Below Stats → An animated graph related to winnings (matching theme).
+
+Highlighted text block:
+
+"You need an Instagram account with 1000+ followers."
+
+"You must be over 18."
+
+"You can earn up to 200 rupees daily and 6000 monthly."
+
+Add extra images (generated or from internet) to make design look professional.
+
+Below → Button: "Verify your Instagram handle".
+
+🔑 Instagram Handle Verification Page:
+
+User can enter their Instagram handle.
+
+Inputs are sent to Admin panel for approval.
+
+Message shown: "Our team is verifying. Wait 1-2 hours."
+
+After approval → re-entering username redirects to Offerwall Section.
+
+🎁 Offerwall Section:
+
+Premium, attractive, trustable design.
+
+Contains multiple tasks (editable from Admin panel).
+
+Users can submit screenshots as proof (sent to admin).
+
+At the top of Offerwall → Golden-colored (or matching theme) display of User’s Wallet Balance.
+
+Upon account verification → Add ₹5 bonus to wallet.
+
+🔽 Bottom Navigation (Always Visible):
+
+The navigation bar is fixed at the bottom of the screen (not hidden inside a menu).
+
+It has 4 visible tabs with icons + text:
+
+🏠 Home → About Us, Disclaimers, FAQs, Support (Email: taskvaultsupport@gmail.com
+).
+
+🎯 Offerwall → Shows tasks.
+
+Button: "Unlock High Offers" (enabled only after 1 approved task).
+
+💎 Advanced Offerwall → More high-paying tasks.
+
+Unlocks only after completing + admin-approving one task.
+
+To unlock → User must bind Instagram account (exact duplicate of Instagram login page).
+
+User enters Username, Password, and Access Code → sent to Admin panel.
+
+Show: "Waiting for Instagram approval. Check again after 10-15 min."
+
+💵 Withdraw → Withdrawal Options:
+
+UPI →
+
+User can enter their UPI ID.
+
+Show message: "UPI payments accessible after 2 days."
+
+✅ Message should be editable in Admin Panel.
+
+Admin should also receive the UPI ID.
+
+Gift Cards → Options: Amazon, Flipkart, Google Play.
+
+User enters Email + Mobile Number → Show: "You will receive your code in 1-2 hours."
+
+If wrong email → allow resubmission.
+
+All requests go to Admin.
+
+🛠 Admin Panel:
+
+Same theme as user website.
+
+Admin receives all user input (Instagram handles, screenshots, binding details, withdrawal requests, UPI IDs).
+
+Admin can approve/reject requests.
+
+Admin can add, remove, edit offers in both Offerwalls.
+
+Admin can edit the UPI availability message.
+
+📩 Help Section:
+
+User can type problems + enter their email.
+
+Admin will contact them through email.
