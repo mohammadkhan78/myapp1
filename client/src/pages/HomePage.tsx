@@ -30,27 +30,13 @@ export default function HomePage({ onNavigate }: HomePageProps) {
         <p className="text-gray-300 text-lg">Earn Money • Complete Tasks • Get Rewarded</p>
       </div>
 
-      {/* Statistics */}
+      {/* Statistics & Earnings Chart Combined */}
       <div className="px-4 mb-8">
-        <div className="grid grid-cols-2 gap-4">
-          <GlassCard className="p-6 text-center card-glow premium-glow">
-            <div className="text-3xl font-bold text-gold text-glow mb-2" data-testid="active-users">
-              {isLoading ? '...' : (stats?.activeUsers || 0).toLocaleString()}
-            </div>
-            <div className="text-gray-300">Active Users</div>
-          </GlassCard>
-          <GlassCard className="p-6 text-center card-glow">
-            <div className="text-3xl font-bold text-green-400 text-glow mb-2" data-testid="total-paid">
-              {isLoading ? '...' : `₹${(stats?.totalPaid || 0).toLocaleString()}`}
-            </div>
-            <div className="text-gray-300">Total Paid</div>
-          </GlassCard>
-        </div>
-      </div>
-
-      {/* Earnings Chart */}
-      <div className="px-4 mb-8">
-        <EarningsChart />
+        <EarningsChart 
+          activeUsers={stats?.activeUsers || 0}
+          totalPaid={stats?.totalPaid || 0}
+          isLoading={isLoading}
+        />
       </div>
 
       {/* Eligibility Requirements */}
