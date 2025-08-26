@@ -262,6 +262,7 @@ export class MemStorage implements IStorage {
     const request: VerificationRequest = {
       ...insertRequest,
       id,
+      status: 'pending',
       createdAt: new Date()
     };
     this.verificationRequests.set(id, request);

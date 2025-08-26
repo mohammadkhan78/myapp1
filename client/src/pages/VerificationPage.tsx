@@ -93,13 +93,13 @@ export default function VerificationPage({ onNavigate }: VerificationPageProps) 
           <div>
             <Label className="block text-sm font-medium mb-3">Instagram Username</Label>
             <div className="relative">
-              <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg font-medium">@</span>
+              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg font-medium z-10">@</span>
               <Input
                 type="text"
                 value={instagramHandle}
                 onChange={(e) => setInstagramHandle(e.target.value)}
                 placeholder="your_username"
-                className="instagram-input pl-12"
+                className="instagram-input"
                 required
                 data-testid="input-instagram-handle"
               />
