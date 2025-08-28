@@ -41,7 +41,7 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Serve React frontend from dist/public
+  // Serve React frontend from dist/public (matches your vite.config outDir)
   const frontendPath = path.join(process.cwd(), "dist/public");
   app.use(express.static(frontendPath));
   app.get("*", (_req, res) => {
@@ -53,3 +53,4 @@ app.use((req, res, next) => {
     console.log(`Server running on port ${port}`);
   });
 })();
+
