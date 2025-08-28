@@ -10,7 +10,7 @@ import {
   insertSupportRequestSchema,
   insertTaskSchema,
   insertSettingSchema
-} from "@shared/schema";
+} from "../shared/schema"; // <-- fixed relative path
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -254,14 +254,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (action === 'approve') {
-        // Add reward to user balance and increment completed tasks
         const user = await storage.getUser(submission.userId);
         const task = await storage.getTask(submission.taskId);
         
         if (user && task) {
           const newBalance = user.balance + task.reward;
           const newCompletedTasks = user.completedTasks + 1;
-          const hasAdvancedAccess = newCompletedTasks >= 1; // Unlock after 1 task
+          const hasAdvancedAccess = newCompletedTasks >= 1;
           
           await storage.updateUser(user.id, {
             balance: newBalance,
@@ -292,10 +291,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (action === 'approve') {
-        // Update user's Instagram bound status
-        await storage.updateUser(request.userId, {
-          isInstagramBound: true
-        });
+        await storage.updateUser(request.userId, { isInstagramBound: true });
       }
       
       res.json(request);
@@ -320,9 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const taskId = req.params.taskId;
       const data = req.body;
       const task = await storage.updateTask(taskId, data);
-      if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-      }
+      if (!task) return res.status(404).json({ message: "Task not found" });
       res.json(task);
     } catch (error) {
       res.status(400).json({ message: "Failed to update task" });
@@ -333,9 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const taskId = req.params.taskId;
       const success = await storage.deleteTask(taskId);
-      if (!success) {
-        return res.status(404).json({ message: "Task not found" });
-      }
+      if (!success) return res.status(404).json({ message: "Task not found" });
       res.json({ success: true });
     } catch (error) {
       res.status(400).json({ message: "Failed to delete task" });
