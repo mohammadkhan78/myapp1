@@ -38,19 +38,16 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
-    throw err;
+    console.error(err); // log instead of crashing
   });
 
-  // Serve React frontend from dist/public (matches your vite.config outDir)
-  const frontendPath = path.join(process.cwd(), "dist/public");
+  // Serve React frontend (adjust if your Vite outDir differs)
+  const frontendPath = path.join(process.cwd(), "client", "dist/public");
   app.use(express.static(frontendPath));
   app.get("*", (_req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 
   const port = parseInt(process.env.PORT || "5000", 10);
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`Server running on port ${port}`);
-  });
+  app.listen(port, "0.0.0.0", () => console.log(`Server running on port ${port}`));
 })();
-
