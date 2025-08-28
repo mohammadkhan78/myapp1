@@ -1,0 +1,13 @@
+{
+  "name": "myapp1",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx tsx server/index.ts",
+    "build": "cd client && npm install && npm run build",
+    "start": "NODE_ENV=production npx tsx server/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
