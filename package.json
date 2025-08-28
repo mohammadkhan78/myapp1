@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "express": "^4.21.2",
-    "drizzle-orm": "^0.26.1",
+    "drizzle-orm": "^0.36.0",
     "zod": "^3.23.2",
     "drizzle-zod": "^0.8.3"
   },
