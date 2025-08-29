@@ -10,22 +10,19 @@ app.use(express.urlencoded({ extended: false }));
 // Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  const pathReq = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  const originalJson = res.json;
+  let captured: any;
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+  res.json = function (body, ...args) {
+    captured = body;
+    return originalJson.apply(res, [body, ...args]);
   };
 
   res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (pathReq.startsWith("/api")) {
-      let logLine = `${req.method} ${pathReq} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      if (logLine.length > 80) logLine = logLine.slice(0, 79) + "…";
-      console.log(logLine);
+    if (req.path.startsWith("/api")) {
+      let line = `${req.method} ${req.path} ${res.statusCode} in ${Date.now() - start}ms`;
+      if (captured) line += ` :: ${JSON.stringify(captured)}`;
+      console.log(line.length > 80 ? line.slice(0, 79) + "…" : line);
     }
   });
 
@@ -35,24 +32,22 @@ app.use((req, res, next) => {
 (async () => {
   await registerRoutes(app);
 
+  // Error handler
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
+    const status = err.status || 500;
+    res.status(status).json({ message: err.message || "Internal Server Error" });
     console.error(err);
   });
 
-  // Serve React frontend (matches Vite's outDir "client/dist")
-  const frontendPath = path.resolve(process.cwd(), "client", "dist");
+  // Serve frontend
+  const frontendPath = path.join(process.cwd(), "client", "dist");
   console.log("Serving frontend from:", frontendPath);
 
   if (fs.existsSync(frontendPath)) {
     app.use(express.static(frontendPath));
-    app.get("*", (_req, res) => {
-      res.sendFile(path.join(frontendPath, "index.html"));
-    });
+    app.get("*", (_req, res) => res.sendFile(path.join(frontendPath, "index.html")));
   } else {
-    console.warn("Frontend build not found at", frontendPath);
+    console.warn("Frontend build not found:", frontendPath);
   }
 
   const port = parseInt(process.env.PORT || "5000", 10);
