@@ -8,12 +8,12 @@
     "start": "npx tsx server/index.ts"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "drizzle-orm": "^0.36.0",
-    "zod": "^3.23.2",
-    "drizzle-zod": "^0.8.3"
+    "drizzle-orm": "0.44.5",
+    "drizzle-zod": "0.8.3",
+    "express": "4.21.2",
+    "zod": "3.25.1"
   },
   "devDependencies": {
-    "tsx": "^3.12.7"
+    "tsx": "3.14.0"
   }
 }
